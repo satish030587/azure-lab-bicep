@@ -64,7 +64,7 @@ resource nsgDb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           sourceAddressPrefix: '10.20.1.0/24'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
-          destinationPortRange: '5432'
+          destinationPortRange: '3306'
         }
       }
       {
