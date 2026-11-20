@@ -1,0 +1,29 @@
+name: Deploy Azure lab
+
+on:
+  push:
+    branches: [main]
+    paths: ['main.bicep']
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Preview changes (what-if)
+        run: az deployment group what-if -g rg-azlab-bicep -f main.bicep -p myIp=${{ secrets.MY_IP }}
+
+      - name: Deploy
+        run: az deployment group create -g rg-azlab-bicep -f main.bicep -p myIp=${{ secrets.MY_IP }}
