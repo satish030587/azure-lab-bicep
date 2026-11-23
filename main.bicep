@@ -44,6 +44,7 @@ resource nsgWeb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           destinationAddressPrefix: '*'
           destinationPortRange: '22'
         }
+      }
       {
         name: 'allow-http'
         properties: {
@@ -56,7 +57,6 @@ resource nsgWeb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           destinationAddressPrefix: '*'
           destinationPortRange: '80'
         }
-       }
       }
     ]
   }
