@@ -56,6 +56,7 @@ resource nsgWeb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           destinationAddressPrefix: '*'
           destinationPortRange: '80'
         }
+       }
       }
     ]
   }
