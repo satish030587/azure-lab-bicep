@@ -6,6 +6,7 @@ on:
     paths:
       - 'main.bicep'
       - 'vm.bicep'
+      - 'kv.bicep'
   workflow_dispatch:
 
 permissions:
@@ -43,3 +44,9 @@ jobs:
         run: |
           az deployment group create -g rg-azlab-bicep -f vm.bicep \
             -p sshPublicKey="${{ secrets.SSH_PUBLIC_KEY }}"
+
+      - name: What-if (Key Vault)
+        run: az deployment group what-if -g rg-azlab-bicep -f kv.bicep
+
+      - name: Deploy Key Vault
+        run: az deployment group create -g rg-azlab-bicep -f kv.bicep
