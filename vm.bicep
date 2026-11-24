@@ -5,6 +5,8 @@ param vmSize string = 'Standard_B2ts_v2'
 @secure()
 param sshPublicKey string
 
+param keyVaultName string = 'kv-azlab-${uniqueString(resourceGroup().id)}'
+
 var cloudInit = '''
 #cloud-config
 package_update: true
@@ -22,6 +24,10 @@ resource vnet 'Microsoft.Network/virtualNetworks@2024-05-01' existing = {
 resource subnetWeb 'Microsoft.Network/virtualNetworks/subnets@2024-05-01' existing = {
   parent: vnet
   name: 'snet-web'
+}
+
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: keyVaultName
 }
 
 resource pip 'Microsoft.Network/publicIPAddresses@2024-05-01' = {
@@ -53,6 +59,9 @@ resource nic 'Microsoft.Network/networkInterfaces@2024-05-01' = {
 resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: 'vm-web-bicep'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     hardwareProfile: { vmSize: vmSize }
     storageProfile: {
@@ -92,3 +101,17 @@ resource vm 'Microsoft.Compute/virtualMachines@2024-07-01' = {
 }
 
 output publicIp string = pip.properties.ipAddress
+
+var secretsUserRoleId = '4633458b-17de-408a-b874-0445c86b69e6'
+
+resource kvRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(kv.id, vm.id, secretsUserRoleId)
+  scope: kv
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', secretsUserRoleId)
+    principalId: vm.identity.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
+output vmPrincipalId string = vm.identity.principalId
