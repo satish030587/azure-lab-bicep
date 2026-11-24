@@ -50,7 +50,7 @@ resource nsgWeb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
         properties: {
           priority: 130
           direction: 'Inbound'
-          access: 'Allow'
+          access: 'Deny'
           protocol: 'Tcp'
           sourceAddressPrefix: 'Internet'
           sourcePortRange: '*'
