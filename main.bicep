@@ -52,7 +52,7 @@ resource nsgWeb 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           direction: 'Inbound'
           access: 'Allow'
           protocol: 'Tcp'
-          sourceAddressPrefix: 'Internet'
+          sourceAddressPrefix: '${myIp}/32'
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
           destinationPortRange: '80'
